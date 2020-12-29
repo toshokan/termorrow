@@ -2,6 +2,9 @@
 name = "termorrow"
 version = "0.1.0"
 authors = ["toshokan <toshokan@shojigate.net>"]
+repository = "https://github.com/toshokan/termorrow"
+license = "MIT"
+documentation = "https://docs.rs/termorrow"
 edition = "2018"
 
 [dependencies]
