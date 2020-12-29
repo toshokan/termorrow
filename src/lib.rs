@@ -27,7 +27,7 @@ pub struct Termios {
 }
 
 #[repr(u32)]
-enum Speed {
+pub enum Speed {
     /// Hang up
     B0 = sys::B0,
     /// 50 baud 
