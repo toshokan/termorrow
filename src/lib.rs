@@ -9,7 +9,11 @@ mod sys {
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 }
 
-struct Termios {
+pub struct Termios {
+    pub input_flags: InputMode,
+    pub output_flags: OutputMode,
+    pub control_flags: ControlMode,
+    pub local_flags: LocalMode
 }
 
 
