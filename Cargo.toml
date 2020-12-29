@@ -5,6 +5,7 @@ authors = ["toshokan <toshokan@shojigate.net>"]
 repository = "https://github.com/toshokan/termorrow"
 license = "MIT"
 documentation = "https://docs.rs/termorrow"
+description = "Ergonomic wrapper for termios.h"
 edition = "2018"
 
 [dependencies]
