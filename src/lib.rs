@@ -9,7 +9,7 @@ mod sys {
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 #[repr(C)]
 pub struct Termios {
     input_flags: InputMode,
@@ -27,6 +27,7 @@ pub struct Termios {
 }
 
 #[repr(u32)]
+#[derive(Debug)]
 pub enum Speed {
     /// Hang up
     B0 = sys::B0,
@@ -69,6 +70,7 @@ impl Default for Speed {
 }
 
 #[derive(Flags, Default)]
+#[flag_debug()]
 #[flag(name = "BRKINT", method_name = "brkint", value = "sys::BRKINT", doc = "Signal interrupt on break.")]
 #[flag(name = "ICRNL", method_name = "icrnl", value = "sys::ICRNL", doc = "Map CR to NL on input.")]
 #[flag(name = "IGNBRK", method_name = "ignbrk", value = "sys::IGNBRK", doc = "Ignore break condition.")]
@@ -85,6 +87,7 @@ impl Default for Speed {
 pub struct InputMode(#[flag_backing_field] u32);
 
 #[derive(Flags, Default)]
+#[flag_debug()]
 #[flag(name = "OPOST", method_name = "opost", value = "sys::OPOST", doc = "Post-process output")]
 #[flag(name = "OLCUC", method_name = "olcuc", value = "sys::OLCUC", doc = "Map lower-case to upper-case on output (LEGACY).")]
 #[flag(name = "ONLCR", method_name = "onlcr", value = "sys::ONLCR", doc = "Map NL to CR-NL on output.")]
@@ -95,6 +98,7 @@ pub struct InputMode(#[flag_backing_field] u32);
 pub struct OutputMode(#[flag_backing_field] u32);
 
 #[derive(Flags, Default)]
+#[flag_debug()]
 #[flag(name = "CSTOPB", method_name = "cstopb", value = "sys::CSTOPB", doc = "Send two stop bits, else one.")]
 #[flag(name = "CREAD", method_name = "cread", value = "sys::CREAD", doc = "Enable receiver.")]
 #[flag(name = "PARENB", method_name = "parenb", value = "sys::PARENB", doc = "Parity enable.")]
@@ -104,6 +108,7 @@ pub struct OutputMode(#[flag_backing_field] u32);
 pub struct ControlMode(#[flag_backing_field] u32);
 
 #[derive(Flags, Default)]
+#[flag_debug()]
 #[flag(name = "ECHO", method_name = "echo", value = "sys::ECHO", doc = "Enable echo.")]
 #[flag(name = "ECHOE", method_name = "echoe", value = "sys::ECHOE", doc = "Echo erase character as error-correcting backspace.")]
 #[flag(name = "ECHOK", method_name = "echok", value = "sys::ECHOK", doc = "Echo KILL.")]
@@ -142,5 +147,14 @@ mod tests {
 	assert_eq!(ptr_offset!(termios, c_cc), ptr_offset!(Termios, cc));
 	assert_eq!(ptr_offset!(termios, c_ispeed), ptr_offset!(Termios, input_speed));
 	assert_eq!(ptr_offset!(termios, c_ospeed), ptr_offset!(Termios, output_speed));
+    }
+
+    #[test]
+    fn flags_match_c_flags() {
+	use sys::termios;
+	let mut t = Termios::default();
+	t.input_flags.set_ignbrk(true);
+	let tt: termios = unsafe {std::mem::transmute(t)};
+	assert_eq!(tt.c_iflag, sys::IGNBRK);
     }
 }
